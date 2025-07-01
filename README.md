@@ -26,7 +26,7 @@ An advanced Model Context Protocol (MCP) server that implements Chain of Thought
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/enhanced-cot-mcp.git
+git clone https://github.com/firatsarlar/enhanced-cot-mcp.git
 cd enhanced-cot-mcp
 
 # Install dependencies
@@ -380,8 +380,8 @@ If you use this tool in research, please cite:
 
 ## Support
 
-- GitHub Issues: [Report bugs or request features](https://github.com/yourusername/enhanced-cot-mcp/issues)
-- Documentation: [Full API documentation](https://github.com/yourusername/enhanced-cot-mcp/wiki)
+- GitHub Issues: [Report bugs or request features](https://github.com/firatsarlar/enhanced-cot-mcp/issues)
+- Documentation: [Full API documentation](https://github.com/firatsarlar/enhanced-cot-mcp/wiki)
 
 ---
 
