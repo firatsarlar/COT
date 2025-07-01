@@ -30,13 +30,14 @@ git clone https://github.com/yourusername/enhanced-cot-mcp.git
 cd enhanced-cot-mcp
 
 # Install dependencies
-npm install
+pnpm install
 
 # Build the project
-npm run build
+pnpm run build
 
-# Or use development mode
-npm run dev
+# Or use development mode (recommended)
+pnpm add -D tsx
+pnpm run dev  # or: npx tsx src/index.ts
 ```
 
 ## Usage
@@ -104,14 +105,15 @@ npm run dev
 
 ### Claude Desktop Integration
 
-Add to your Claude Desktop configuration:
+Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 
+#### Option 1: Direct TypeScript Execution with tsx (Recommended)
 ```json
 {
   "mcpServers": {
     "enhanced-cot": {
-      "command": "node",
-      "args": ["/path/to/enhanced-cot-mcp/dist/index.js"],
+      "command": "npx",
+      "args": ["tsx", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -119,6 +121,110 @@ Add to your Claude Desktop configuration:
   }
 }
 ```
+
+#### Option 2: Built JavaScript (Production)
+```json
+{
+  "mcpServers": {
+    "enhanced-cot": {
+      "command": "node",
+      "args": ["/absolute/path/to/enhanced-cot-mcp/dist/index.js"],
+      "env": {
+        "DISABLE_COT_LOGGING": "false"
+      }
+    }
+  }
+}
+```
+
+#### Option 3: Node.js Native TypeScript (Node.js 22.6+)
+```json
+{
+  "mcpServers": {
+    "enhanced-cot": {
+      "command": "node",
+      "args": ["--experimental-strip-types", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "env": {
+        "DISABLE_COT_LOGGING": "false"
+      }
+    }
+  }
+}
+```
+
+#### Option 4: Node.js Native TypeScript (Node.js 23.6+)
+```json
+{
+  "mcpServers": {
+    "enhanced-cot": {
+      "command": "node",
+      "args": ["/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "env": {
+        "DISABLE_COT_LOGGING": "false"
+      }
+    }
+  }
+}
+```
+
+#### Option 5: ts-node with ESM Loader (Fallback)
+```json
+{
+  "mcpServers": {
+    "enhanced-cot": {
+      "command": "node",
+      "args": ["--loader", "ts-node/esm", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "env": {
+        "DISABLE_COT_LOGGING": "false"
+      }
+    }
+  }
+}
+```
+
+#### Option 6: Bun Runtime (High Performance)
+```json
+{
+  "mcpServers": {
+    "enhanced-cot": {
+      "command": "bun",
+      "args": ["run", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "env": {
+        "DISABLE_COT_LOGGING": "false"
+      }
+    }
+  }
+}
+```
+
+#### Option 7: Deno Runtime (Secure)
+```json
+{
+  "mcpServers": {
+    "enhanced-cot": {
+      "command": "deno",
+      "args": ["run", "--allow-all", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "env": {
+        "DISABLE_COT_LOGGING": "false"
+      }
+    }
+  }
+}
+```
+
+**Requirements & Notes:**
+- **Option 1**: Install tsx (`pnpm add -D tsx` or `npm install -g tsx`) - **Recommended**
+- **Option 2**: Build project first (`pnpm run build`) - Most stable
+- **Option 3**: Node.js 22.6-23.5 required (experimental flag needed)
+- **Option 4**: Node.js 23.6+ required (native TypeScript support)
+- **Option 5**: ts-node installed (`pnpm add -D ts-node`) - May have ESM issues
+- **Option 6**: Bun runtime installed - Fastest execution
+- **Option 7**: Deno runtime installed - Security-focused
+
+**Troubleshooting:**
+- If Option 1 fails, try installing tsx globally: `npm install -g tsx`
+- If Option 5 has module issues, use Option 1 instead
+- Replace `/absolute/path/to/enhanced-cot-mcp` with your actual project path
 
 ## Problem Types
 
@@ -222,15 +328,30 @@ This implementation is based on:
 ## Development
 
 ```bash
-# Run in development mode
-npm run dev
+# Run in development mode (fast TypeScript execution)
+pnpm run dev  # Uses tsx for fast execution
+
+# Alternative: Direct tsx execution
+npx tsx src/index.ts
 
 # Watch for changes
-npm run watch
+pnpm run watch
 
 # Build for production
-npm run build
+pnpm run build
+
+# Test built version
+pnpm run start
 ```
+
+### Execution Methods
+
+The server supports multiple execution methods:
+
+1. **tsx (Recommended)**: `npx tsx src/index.ts` - Fast, handles ESM properly
+2. **Node.js Native** (Node 22.6+): `node --experimental-strip-types src/index.ts`
+3. **Built JavaScript**: `node dist/index.js` - Traditional approach
+4. **ts-node (Fallback)**: `node --loader ts-node/esm src/index.ts`
 
 ## Contributing
 

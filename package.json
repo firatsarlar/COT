@@ -12,7 +12,7 @@
     "watch": "tsc --watch",
     "dev": "node --loader ts-node/esm src/index.ts",
     "start": "node dist/index.js",
-    "prepare": "npm run build"
+    "prepare": "pnpm run build"
   },
   "keywords": [
     "mcp",
@@ -25,13 +25,13 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.13.2",
     "chalk": "^5.3.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^24.0.7",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.8.3"
   },
   "files": [
     "dist",

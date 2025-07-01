@@ -17,6 +17,9 @@ typescript@^5.3.3
 @types/node@^20.11.0
 ts-node@^10.9.2
 
+# Alternative TypeScript Execution (Recommended for Development)
+tsx@^4.19.2
+
 # Optional Dependencies for Extended Features
 # (Uncomment if using these features)
 
@@ -104,6 +107,27 @@ ts-node@^10.9.2
 # - UTF-8 encoding support
 # - Multi-language thought processing
 # - Locale-aware number formatting
+
+# Execution Methods (July 2025):
+
+## Method 1: TSX (Recommended for Development)
+# Install: pnpm add -D tsx@^4.19.2
+# Run: npx tsx src/index.ts
+# Advantages: Fast (esbuild), better ESM support, no ts-node/pnpm issues
+
+## Method 2: Node.js Native TypeScript (Node.js 22.6+)
+# Node.js 22.6-23.5: node --experimental-strip-types src/index.ts
+# Node.js 23.6+: node src/index.ts (default)
+# Advantages: No dependencies, built into Node.js
+
+## Method 3: ts-node (Legacy/Fallback)
+# Install: pnpm add -D ts-node@^10.9.2
+# Run: node --loader ts-node/esm src/index.ts
+# Issues: ESM conflicts, slower, pnpm module resolution problems
+
+## Method 4: Alternative Runtimes
+# Bun: bun run src/index.ts (fastest)
+# Deno: deno run src/index.ts (secure)
 
 # Known Limitations:
 # - Maximum thought length: 10,000 characters
