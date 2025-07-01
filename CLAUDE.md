@@ -56,3 +56,7 @@ This is an Enhanced Chain of Thought MCP (Model Context Protocol) server that im
 ### Integration
 
 Designed for Claude Desktop integration via MCP protocol. The server communicates over stdio and provides JSON responses with thought processing results and metrics.
+
+### RULES
+
+Please include @devdocs/rules.md for workflow.
