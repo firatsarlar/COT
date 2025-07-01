@@ -25,12 +25,12 @@
   "author": "firatsarlar",
   "repository": {
     "type": "git",
-    "url": "https://github.com/firatsarlar/enhanced-cot-mcp.git"
+    "url": "https://github.com/firatsarlar/COT.git"
   },
   "bugs": {
-    "url": "https://github.com/firatsarlar/enhanced-cot-mcp/issues"
+    "url": "https://github.com/firatsarlar/COT/issues"
   },
-  "homepage": "https://github.com/firatsarlar/enhanced-cot-mcp#readme",
+  "homepage": "https://github.com/firatsarlar/COT#readme",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.2",

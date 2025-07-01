@@ -26,8 +26,8 @@ An advanced Model Context Protocol (MCP) server that implements Chain of Thought
 
 ```bash
 # Clone the repository
-git clone https://github.com/firatsarlar/enhanced-cot-mcp.git
-cd enhanced-cot-mcp
+git clone https://github.com/firatsarlar/COT.git
+cd COT
 
 # Install dependencies
 pnpm install
@@ -113,7 +113,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "npx",
-      "args": ["tsx", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "args": ["tsx", "/absolute/path/to/COT/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -128,7 +128,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "node",
-      "args": ["/absolute/path/to/enhanced-cot-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/COT/dist/index.js"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -143,7 +143,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "node",
-      "args": ["--experimental-strip-types", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "args": ["--experimental-strip-types", "/absolute/path/to/COT/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -158,7 +158,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "node",
-      "args": ["/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "args": ["/absolute/path/to/COT/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -173,7 +173,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "node",
-      "args": ["--loader", "ts-node/esm", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "args": ["--loader", "ts-node/esm", "/absolute/path/to/COT/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -188,7 +188,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "bun",
-      "args": ["run", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "args": ["run", "/absolute/path/to/COT/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -203,7 +203,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "enhanced-cot": {
       "command": "deno",
-      "args": ["run", "--allow-all", "/absolute/path/to/enhanced-cot-mcp/src/index.ts"],
+      "args": ["run", "--allow-all", "/absolute/path/to/COT/src/index.ts"],
       "env": {
         "DISABLE_COT_LOGGING": "false"
       }
@@ -224,7 +224,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 **Troubleshooting:**
 - If Option 1 fails, try installing tsx globally: `npm install -g tsx`
 - If Option 5 has module issues, use Option 1 instead
-- Replace `/absolute/path/to/enhanced-cot-mcp` with your actual project path
+- Replace `/absolute/path/to/COT` with your actual project path
 
 ## Problem Types
 
@@ -380,8 +380,8 @@ If you use this tool in research, please cite:
 
 ## Support
 
-- GitHub Issues: [Report bugs or request features](https://github.com/firatsarlar/enhanced-cot-mcp/issues)
-- Documentation: [Full API documentation](https://github.com/firatsarlar/enhanced-cot-mcp/wiki)
+- GitHub Issues: [Report bugs or request features](https://github.com/firatsarlar/COT/issues)
+- Documentation: [Full API documentation](https://github.com/firatsarlar/COT/wiki)
 
 ---
 
