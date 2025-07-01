@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "dev": "node --loader ts-node/esm src/index.ts",
+    "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "prepare": "pnpm run build"
   },
@@ -22,7 +22,15 @@
     "llm",
     "prompt-engineering"
   ],
-  "author": "Your Name",
+  "author": "firatsarlar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/firatsarlar/enhanced-cot-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/firatsarlar/enhanced-cot-mcp/issues"
+  },
+  "homepage": "https://github.com/firatsarlar/enhanced-cot-mcp#readme",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.2",
