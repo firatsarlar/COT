@@ -124,6 +124,91 @@ const CHAIN_TEMPLATES: ChainTemplate[] = [
       "Conflict: Each prediction read alters reality, creating paradoxes",
       "Theme: The weight of knowledge and free will vs determinism"
     ]
+  },
+  {
+    name: "Tree Exploration",
+    problemType: "analysis",
+    mode: "concise",
+    description: "Systematic tree-like exploration of options with branching",
+    exampleThoughts: [
+      "Root: Problem space analysis",
+      "Branch A: Option 1 feasibility",
+      "Branch B: Option 2 constraints", 
+      "Branch A1: Implementation path",
+      "Branch A2: Alternative approach",
+      "Merge: Best solution synthesis"
+    ]
+  },
+  {
+    name: "Decision Tree",
+    problemType: "planning",
+    mode: "concise",
+    description: "Structured decision making with clear branching points",
+    exampleThoughts: [
+      "Root: Core decision criteria",
+      "If condition A → Branch left",
+      "If condition B → Branch right",
+      "Left branch: Pros/cons analysis",
+      "Right branch: Risk assessment",
+      "Final: Optimal path selection"
+    ]
+  },
+  {
+    name: "Debugging Tree",
+    problemType: "logical",
+    mode: "concise",
+    description: "Systematic debugging with hypothesis branching",
+    exampleThoughts: [
+      "Error: Initial problem statement",
+      "Hypothesis A: Network issue",
+      "Hypothesis B: Logic error",
+      "Test A: Network diagnostics",
+      "Test B: Code review",
+      "Branch A failed → Try B",
+      "Solution: Root cause found"
+    ]
+  },
+  {
+    name: "Research Tree",
+    problemType: "analysis",
+    mode: "standard",
+    description: "Multi-perspective research with branching viewpoints",
+    exampleThoughts: [
+      "Topic: Central research question",
+      "Branch 1: Academic perspective with detailed literature review",
+      "Branch 2: Industry perspective with market analysis",
+      "Branch 3: User perspective with behavioral insights",
+      "Cross-analysis: Connecting patterns across branches",
+      "Synthesis: Integrated understanding and conclusions"
+    ]
+  },
+  {
+    name: "Feature Design Tree",
+    problemType: "creative",
+    mode: "standard", 
+    description: "Feature development with architectural branching",
+    exampleThoughts: [
+      "Feature goal: Core user need identification",
+      "UI Branch: Interface design considerations and user flow",
+      "Backend Branch: Data models and API requirements",
+      "Performance Branch: Optimization and scaling concerns",
+      "Integration points: How branches connect and dependencies",
+      "MVP definition: Minimal viable implementation path"
+    ]
+  },
+  {
+    name: "Learning Tree",
+    problemType: "general",
+    mode: "concise",
+    description: "Knowledge acquisition with concept branching",
+    exampleThoughts: [
+      "Core concept: Foundation",
+      "Branch 1: Practical applications",
+      "Branch 2: Theoretical depth",
+      "Branch 3: Related concepts",
+      "Connections: Links between branches",
+      "Mastery: Integrated understanding"
+    ]
   }
 ];
 
@@ -371,7 +456,7 @@ class EnhancedChainOfThoughtServer {
       }
 
       // Generate response with metrics
-      const metrics = this.generateMetrics();
+      // const metrics = this.generateMetrics();
       
       return {
         content: [{
@@ -382,14 +467,14 @@ class EnhancedChainOfThoughtServer {
             nextThoughtNeeded: thoughtData.nextThoughtNeeded,
             currentMode: actualMode,
             suggestedMode: thoughtData.suggestedModeSwitch,
-            metrics: {
-              wordCount,
-              tokenCount,
-              totalWords: metrics.totalWords,
-              totalTokens: metrics.totalTokens,
-              efficiency: metrics.efficiency.toFixed(2),
-              averageWordsPerThought: metrics.averageWordsPerThought.toFixed(1)
-            },
+            // metrics: {
+            //   wordCount,
+            //   tokenCount,
+            //   totalWords: metrics.totalWords,
+            //   totalTokens: metrics.totalTokens,
+            //   efficiency: metrics.efficiency.toFixed(2),
+            //   averageWordsPerThought: metrics.averageWordsPerThought.toFixed(1)
+            // },
             branches: Object.keys(this.branches),
             thoughtHistoryLength: this.thoughtHistory.length
           }, null, 2)
@@ -488,14 +573,15 @@ class EnhancedChainOfThoughtServer {
 // Tool definitions
 const CHAIN_OF_THOUGHT_TOOL: Tool = {
   name: "chainofthought",
-  description: `Enhanced Chain of Thought reasoning tool with multiple modes inspired by Chain of Draft research.
+  description: `Enhanced Chain of Thought reasoning tool with multiple modes.
 
 Modes:
 - draft: Ultra-concise reasoning (≤5 words) for maximum efficiency
 - concise: Balanced reasoning (≤15 words) for clarity with efficiency  
 - standard: Full Chain of Thought with detailed explanations
 - auto: Adaptive mode that switches based on problem complexity
-
+- implementation: Detailed reasoning with step-by-step guidance (≤35 words)
+- planning: Focused on planning and analysis tasks (≤25 words)
 Features:
 - Token and efficiency tracking
 - Mode switching recommendations
@@ -507,9 +593,11 @@ Usage tips:
 - Use 'draft' mode for math/logic problems (like GSM8K)
 - Use 'concise' for planning and analysis
 - Use 'standard' for creative or complex explanations
+- Use 'implementation' for detailed step-by-step guidance
+- Use 'planning' for focused planning tasks
 - Use 'auto' to let the system optimize
 
-The tool tracks efficiency metrics and suggests mode switches when appropriate.`,
+The tool suggests mode switches when appropriate.`,
   inputSchema: {
     type: "object",
     properties: {
