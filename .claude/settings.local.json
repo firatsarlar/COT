@@ -9,7 +9,11 @@
       "mcp__enhanced-cot__chainofthought",
       "mcp__enhanced-cot__*",
       "Bash(mkdir:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(DISABLE_COT_LOGGING=true pnpm test -- consensus.test.ts)",
+      "Bash(DISABLE_COT_LOGGING=true pnpm test)",
+      "Bash(DISABLE_COT_LOGGING=true pnpm test -- rollback.test.ts)",
+      "Bash(DISABLE_COT_LOGGING=true pnpm test -- auto-cot.test.ts)"
     ],
     "deny": []
   }

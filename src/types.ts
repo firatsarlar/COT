@@ -42,6 +42,30 @@ export interface ChainTemplate {
   description: string;
 }
 
+export interface ConsensusData {
+  paths: ThoughtData[][];
+  consensus: string;
+  confidence: number;
+  agreementScore: number;
+  pathCount: number;
+  votingResults: Record<string, number>;
+}
+
+export interface RollbackState {
+  thoughtId: string;
+  previousStates: ThoughtData[];
+  rollbackReason: string;
+  correctedThought: ThoughtData;
+  timestamp: number;
+}
+
+export interface AutoCoTConfig {
+  trigger: string;
+  diversitySampling: boolean;
+  templateSuggestion: boolean;
+  contextAware: boolean;
+}
+
 // Mode configurations
 export const MODE_CONFIGS = {
   draft: {
