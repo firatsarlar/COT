@@ -105,6 +105,9 @@ export const PROBLEM_TYPE_DEFAULTS: Record<ProblemType, ReasoningMode> = {
 };
 
 // Chain templates from research
+// Represents an assumed average word count for a standard, unoptimized CoT thought.
+export const STANDARD_AVG_WORDS_FOR_EFFICIENCY = 50;
+
 export const CHAIN_TEMPLATES: ChainTemplate[] = [
   {
     name: "GSM8K Math",

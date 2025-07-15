@@ -10,7 +10,8 @@ import {
   CHAIN_TEMPLATES,
   ConsensusData,
   RollbackState,
-  AutoCoTConfig
+  AutoCoTConfig,
+  STANDARD_AVG_WORDS_FOR_EFFICIENCY
 } from './types.js';
 
 export class EnhancedChainOfThoughtServer {
@@ -69,7 +70,7 @@ export class EnhancedChainOfThoughtServer {
     if (this.thoughtHistory.length === 0) return 1.0;
 
     const avgWords = this.thoughtHistory.reduce((sum, t) => sum + t.wordCount, 0) / this.thoughtHistory.length;
-    const standardAvgWords = 50; // Assumed average for standard CoT
+    const standardAvgWords = STANDARD_AVG_WORDS_FOR_EFFICIENCY; // Assumed average for standard CoT
     
     return standardAvgWords / avgWords;
   }
@@ -156,6 +157,14 @@ export class EnhancedChainOfThoughtServer {
   }
 
   private generateMultiplePaths(input: Partial<ThoughtData>, pathCount: number = 3): ThoughtData[][] {
+    /**
+     * @remarks
+     * This method simulates the generation of multiple reasoning paths for self-consistency.
+     * It is a placeholder for a future enhancement where actual multi-path generation
+     * would be performed by an external model or a more sophisticated internal mechanism.
+     * Currently, it generates slight variations of the input thought to simulate diversity
+     * for testing the consensus mechanism.
+     */
     const paths: ThoughtData[][] = [];
     
     for (let i = 0; i < pathCount; i++) {
@@ -745,48 +754,24 @@ export class EnhancedChainOfThoughtServer {
     try {
       const validatedInput = this.validateThoughtData(input);
       
-      // Handle rollback operation first
+      // Handle rollback operation first (terminating action)
       if (validatedInput.rollbackToThought) {
-        const rollbackResult = this.handleRollback(validatedInput.rollbackToThought, validatedInput.rollbackReason || 'Manual rollback');
-        return rollbackResult;
+        return this.handleRollback(validatedInput.rollbackToThought, validatedInput.rollbackReason || 'Manual rollback');
       }
       
-      // Auto-CoT processing
-      let autoCoTSuggestions: any = {};
-      const isAutoModeEnabled = validatedInput.autoMode;
-      const hasAutoTrigger = this.detectAutoCoTTrigger(validatedInput.thought || '');
-      
-      if (isAutoModeEnabled || hasAutoTrigger) {
-        // Automatic mode selection based on content
-        const suggestedMode = this.analyzeContentForAutoMode(validatedInput.thought || '');
-        
-        // Auto-detect problem type if not provided
-        const detectedProblemType = validatedInput.problemType || this.detectProblemType(validatedInput.thought || '');
-        
-        // Template suggestion
-        const suggestedTemplate = this.suggestTemplate(validatedInput.thought || '', detectedProblemType);
-        
-        autoCoTSuggestions = {
-          autoTriggerDetected: hasAutoTrigger,
-          suggestedMode,
-          detectedProblemType,
-          suggestedTemplate: suggestedTemplate ? {
-            name: suggestedTemplate.name,
-            description: suggestedTemplate.description,
-            exampleThoughts: this.generateDiverseExamples(suggestedTemplate)
-          } : undefined
-        };
-        
-        // Apply auto-suggestions
-        if (!validatedInput.mode) {
-          validatedInput.mode = suggestedMode;
-        }
-        if (!validatedInput.problemType) {
-          validatedInput.problemType = detectedProblemType;
-        }
+      // Orchestrate the thought processing
+      const autoCoTSuggestions = this._handleAutoCoT(validatedInput);
+      let consensusData: ConsensusData | undefined;
+
+      // Apply auto-suggestions
+      if (!validatedInput.mode && autoCoTSuggestions.suggestedMode) {
+        validatedInput.mode = autoCoTSuggestions.suggestedMode;
+      }
+      if (!validatedInput.problemType && autoCoTSuggestions.detectedProblemType) {
+        validatedInput.problemType = autoCoTSuggestions.detectedProblemType;
       }
 
-      // Set mode and problem type
+      // Set current mode and problem type based on validated input or auto-suggestions
       if (validatedInput.mode) {
         this.currentMode = validatedInput.mode;
       }
@@ -794,87 +779,20 @@ export class EnhancedChainOfThoughtServer {
         this.currentProblemType = validatedInput.problemType;
       }
 
-      // Check if self-consistency is requested
-      const pathCount = validatedInput.pathCount;
-      let consensusData: ConsensusData | undefined;
-
-      if (pathCount && pathCount > 1 && validatedInput.thought && validatedInput.thought.trim().length > 0) {
-        // Generate multiple reasoning paths
-        const paths = this.generateMultiplePaths(validatedInput, pathCount);
-        consensusData = this.calculateConsensus(paths);
-        
-        // Log consensus results
-        if (!this.disableLogging) {
-          console.error(chalk.magenta(`🔄 Self-Consistency with ${pathCount} paths`));
-          console.error(chalk.gray(`Agreement: ${(consensusData.agreementScore * 100).toFixed(1)}%`));
-          console.error(chalk.gray(`Confidence: ${(consensusData.confidence * 100).toFixed(1)}%`));
-          console.error(chalk.blue(`Consensus: ${consensusData.consensus}`));
-        }
+      // Handle self-consistency
+      if (validatedInput.pathCount && validatedInput.pathCount > 1 && validatedInput.thought && validatedInput.thought.trim().length > 0) {
+        consensusData = this._handleSelfConsistency(validatedInput as Partial<ThoughtData> & { pathCount: number });
       }
 
-      // Determine actual mode for this thought
-      const actualMode = this.determineOptimalMode(
-        validatedInput.thought!, 
-        this.currentProblemType
-      );
-
-      // Calculate metrics
-      const wordCount = this.countWords(validatedInput.thought!);
-      const tokenCount = this.estimateTokenCount(validatedInput.thought!);
-
-      // Check word limit for mode
-      const maxWords = MODE_CONFIGS[actualMode].maxWords;
-      if (actualMode !== 'auto' && wordCount > maxWords) {
-        console.warn(chalk.yellow(`⚠️  Thought exceeds ${actualMode} mode limit (${wordCount}/${maxWords} words)`));
-      }
-
-      // Create complete thought data
-      const thoughtData: ThoughtData = {
-        ...validatedInput as any,
-        mode: actualMode,
-        wordCount,
-        tokenCount,
-        timestamp: Date.now(),
-        suggestedModeSwitch: undefined
-      };
-
-      // Check if mode switch is recommended
-      thoughtData.suggestedModeSwitch = this.suggestModeSwitch(thoughtData);
-      
-      // Check if branching is recommended
-      thoughtData.suggestedBranching = this.suggestBranching(thoughtData);
-
-      // Update total thoughts if needed
-      if (thoughtData.thoughtNumber > thoughtData.totalThoughts) {
-        thoughtData.totalThoughts = thoughtData.thoughtNumber;
-      }
-
-      // Store thought
-      this.thoughtHistory.push(thoughtData);
-
-      // Save snapshot after adding new thought (for rollback support)
-      this.saveThoughtSnapshot(thoughtData.thoughtNumber);
-
-      // Handle branching
-      if (thoughtData.branchFromThought && thoughtData.branchId) {
-        if (!this.branches[thoughtData.branchId]) {
-          this.branches[thoughtData.branchId] = [];
-        }
-        this.branches[thoughtData.branchId].push(thoughtData);
-      }
-
-      // Log formatted thought
-      if (!this.disableLogging) {
-        const formattedThought = this.formatThought(thoughtData);
-        console.error(formattedThought);
-      }
+      // Process and store the thought
+      const thoughtData = this._processAndStoreThought(validatedInput);
 
       // Prepare response with optional consensus data
       const responseData: any = {
         thoughtNumber: thoughtData.thoughtNumber,
         totalThoughts: thoughtData.totalThoughts,
         nextThoughtNeeded: thoughtData.nextThoughtNeeded,
-        currentMode: actualMode,
+        currentMode: thoughtData.mode, // Use the actual mode from thoughtData
         suggestedMode: thoughtData.suggestedModeSwitch,
         suggestedBranching: thoughtData.suggestedBranching,
         nextBranchId: thoughtData.suggestedBranching ? this.generateBranchId() : undefined,
@@ -916,6 +834,87 @@ export class EnhancedChainOfThoughtServer {
         isError: true
       };
     }
+  }
+
+  private _handleAutoCoT(validatedInput: Partial<ThoughtData> & { autoMode?: boolean }): any {
+    let autoCoTSuggestions: any = {};
+    const isAutoModeEnabled = validatedInput.autoMode;
+    const hasAutoTrigger = this.detectAutoCoTTrigger(validatedInput.thought || '');
+    
+    if (isAutoModeEnabled || hasAutoTrigger) {
+      const suggestedMode = this.analyzeContentForAutoMode(validatedInput.thought || '');
+      const detectedProblemType = validatedInput.problemType || this.detectProblemType(validatedInput.thought || '');
+      const suggestedTemplate = this.suggestTemplate(validatedInput.thought || '', detectedProblemType);
+      
+      autoCoTSuggestions = {
+        autoTriggerDetected: hasAutoTrigger,
+        suggestedMode,
+        detectedProblemType,
+        suggestedTemplate: suggestedTemplate ? {
+          name: suggestedTemplate.name,
+          description: suggestedTemplate.description,
+          exampleThoughts: this.generateDiverseExamples(suggestedTemplate)
+        } : undefined
+      };
+    }
+    return autoCoTSuggestions;
+  }
+
+  private _handleSelfConsistency(validatedInput: Partial<ThoughtData> & { pathCount: number }): ConsensusData {
+    const pathCount = validatedInput.pathCount!;
+    const paths = this.generateMultiplePaths(validatedInput, pathCount);
+    const consensusData = this.calculateConsensus(paths);
+    
+    if (!this.disableLogging) {
+      console.error(chalk.magenta(`🔄 Self-Consistency with ${pathCount} paths`));
+      console.error(chalk.gray(`Agreement: ${(consensusData.agreementScore * 100).toFixed(1)}%`));
+      console.error(chalk.gray(`Confidence: ${(consensusData.confidence * 100).toFixed(1)}%`));
+      console.error(chalk.blue(`Consensus: ${consensusData.consensus}`));
+    }
+    return consensusData;
+  }
+
+  private _processAndStoreThought(validatedInput: Partial<ThoughtData>): ThoughtData {
+    const actualMode = this.determineOptimalMode(validatedInput.thought!, this.currentProblemType);
+    const wordCount = this.countWords(validatedInput.thought!);
+    const tokenCount = this.estimateTokenCount(validatedInput.thought!);
+
+    const maxWords = MODE_CONFIGS[actualMode].maxWords;
+    if (actualMode !== 'auto' && wordCount > maxWords) {
+      console.warn(chalk.yellow(`⚠️  Thought exceeds ${actualMode} mode limit (${wordCount}/${maxWords} words)`));
+    }
+
+    const thoughtData: ThoughtData = {
+      ...validatedInput as any,
+      mode: actualMode,
+      wordCount,
+      tokenCount,
+      timestamp: Date.now(),
+      suggestedModeSwitch: undefined
+    };
+
+    thoughtData.suggestedModeSwitch = this.suggestModeSwitch(thoughtData);
+    thoughtData.suggestedBranching = this.suggestBranching(thoughtData);
+
+    if (thoughtData.thoughtNumber > thoughtData.totalThoughts) {
+      thoughtData.totalThoughts = thoughtData.thoughtNumber;
+    }
+
+    this.thoughtHistory.push(thoughtData);
+    this.saveThoughtSnapshot(thoughtData.thoughtNumber);
+
+    if (thoughtData.branchFromThought && thoughtData.branchId) {
+      if (!this.branches[thoughtData.branchId]) {
+        this.branches[thoughtData.branchId] = [];
+      }
+      this.branches[thoughtData.branchId].push(thoughtData);
+    }
+
+    if (!this.disableLogging) {
+      const formattedThought = this.formatThought(thoughtData);
+      console.error(formattedThought);
+    }
+    return thoughtData;
   }
 
   public getChainSummary(): { content: Array<{ type: string; text: string }> } {
