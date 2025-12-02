@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `pnpm run build` - Compile TypeScript to JavaScript
 - `pnpm run watch` - Watch for changes and recompile
-- `pnpm run dev` - Run in development mode with ts-node
+- `pnpm run dev` - Run in development mode with tsx
 - `pnpm run start` - Run the built server
 - `pnpm install` - Install dependencies
 - `pnpm test` - Run comprehensive test suite (103 tests)
@@ -26,10 +26,11 @@ This is an Enhanced Chain of Thought MCP (Model Context Protocol) server impleme
 ### Core Components
 
 1. **EnhancedChainOfThoughtServer class**: Main server logic with advanced reasoning capabilities
-2. **Four reasoning modes**: 
+2. **Four reasoning modes**:
    - `draft` (≤5 words): Ultra-concise for math/logic
    - `concise` (≤15 words): Balanced clarity and efficiency
    - `standard`: Full detailed reasoning
+   - `analysis` (≤50 words): In-depth analysis for complex problems
    - `auto`: Adaptive mode switching
 3. **Chain templates**: Pre-configured patterns from research with 9 specialized templates
 4. **Advanced features**: Self-consistency voting, rollback support, auto-CoT generation
@@ -37,25 +38,28 @@ This is an Enhanced Chain of Thought MCP (Model Context Protocol) server impleme
 ### Tools Provided
 
 - `chainofthought`: Main reasoning tool with branching, consensus, rollback, and auto-CoT features
-- `chainsummary`: Generate chain metrics and efficiency analysis  
+- `chainsummary`: Generate chain metrics and efficiency analysis
 - `loadtemplate`: Load research-based templates
 - `resetchain`: Clear thought history, branches, and rollback data
 
 ### Phase 1 Features (COMPLETED)
 
 #### 1.1 Self-Consistency Voting System
+
 - **Multi-path reasoning**: Generate 2-10 reasoning paths with consensus selection
 - **Majority voting**: Achieve +25% accuracy improvement via path agreement
 - **Confidence scoring**: Agreement metrics and voting results
 - **Parameter**: `pathCount` (2-10, default: 3)
 
 #### 1.2 Rollback/Backtracking Support
+
 - **State management**: Automatic thought snapshots for rollback points
 - **Revision history**: Track all rollback operations with unique IDs
 - **Branch integrity**: Automatic cleanup of invalid branches after rollback
 - **Parameters**: `rollbackToThought` (thought number), `rollbackReason` (string)
 
 #### 1.3 Auto-CoT Generation
+
 - **Trigger detection**: Automatic activation on "Let's think step by step" and similar phrases
 - **Content analysis**: Intelligent mode selection based on mathematical, logical, creative, or planning content
 - **Template suggestions**: Automatic template matching with relevance scoring

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 // Types and Interfaces
-export type ReasoningMode = 'draft' | 'concise' | 'standard' | 'auto';
+export type ReasoningMode = 'draft' | 'concise' | 'standard' | 'analysis' | 'auto';
 export type ProblemType = 'arithmetic' | 'logical' | 'creative' | 'planning' | 'analysis' | 'general';
 
 export interface ThoughtData {
@@ -85,6 +85,12 @@ export const MODE_CONFIGS = {
     description: "Standard Chain of Thought with detailed reasoning",
     color: chalk.blue,
     tokenMultiplier: 1.0
+  },
+  analysis: {
+    maxWords: 50,
+    description: "In-depth analysis mode for complex problems (≤50 words)",
+    color: chalk.yellow,
+    tokenMultiplier: 0.8
   },
   auto: {
     maxWords: Infinity,

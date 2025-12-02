@@ -8,6 +8,7 @@ Modes:
 - draft: Ultra-concise reasoning (≤5 words) for maximum efficiency
 - concise: Balanced reasoning (≤15 words) for clarity with efficiency  
 - standard: Full Chain of Thought with detailed explanations
+- analysis: In-depth analysis mode for complex problems ( ≤50 words)
 - auto: Adaptive mode that switches based on problem complexity
 
 Key Features:
@@ -78,7 +79,7 @@ The tool actively suggests both mode switches AND branching opportunities.`,
       },
       mode: {
         type: "string",
-        enum: ["draft", "concise", "standard", "auto"],
+        enum: ["draft", "concise", "standard", "analysis", "auto"],
         description: "Reasoning mode to use"
       },
       problemType: {
