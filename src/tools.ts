@@ -2,60 +2,25 @@ import { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 export const CHAIN_OF_THOUGHT_TOOL: Tool = {
   name: "chainofthought",
-  description: `Enhanced Chain of Thought reasoning tool with multiple modes, intelligent branching, self-consistency voting, rollback support, and automatic CoT generation.
+  description: `Enhanced Chain of Thought reasoning tool with multiple modes and automatic CoT generation.
 
 Modes:
 - draft: Ultra-concise reasoning (≤5 words) for maximum efficiency
-- concise: Balanced reasoning (≤15 words) for clarity with efficiency  
+- concise: Balanced reasoning (≤15 words) for clarity with efficiency
 - standard: Full Chain of Thought with detailed explanations
-- analysis: In-depth analysis mode for complex problems ( ≤50 words)
+- analysis: In-depth analysis mode for complex problems (≤50 words)
 - auto: Adaptive mode that switches based on problem complexity
 
 Key Features:
-- BRANCHING: Explore multiple solution paths simultaneously for better results
-- SELF-CONSISTENCY: Generate multiple reasoning paths and vote for consensus (pathCount parameter)
-- ROLLBACK: Go back to previous thoughts and correct reasoning errors (rollbackToThought parameter)
 - AUTO-COT: Automatic reasoning chain generation with minimal input (autoMode parameter)
-- Auto-suggestions: Tool recommends when to branch based on content analysis
-- Smart branch IDs: Automatically generates branch identifiers (A, B, C, etc.)
-- Branch visualization: Clear display of thought trees and connections
-
-Self-Consistency Benefits:
-✓ Generate 3-5 reasoning paths for complex problems
-✓ Achieve consensus through majority voting
-✓ Improve accuracy by 15-25% on challenging tasks
-✓ Build confidence through agreement scoring
-
-Rollback Benefits:
-✓ Correct reasoning errors without starting over
-✓ Maintain thought history integrity
-✓ Enable iterative refinement of reasoning
-✓ Support undo/redo functionality
-
-Auto-CoT Benefits:
-✓ Auto-detect reasoning opportunities >80% accuracy
-✓ Reduce manual configuration by 60%
-✓ Maintain reasoning quality while increasing automation
-✓ Intelligent template and mode suggestions
-
-Branching Benefits:
-✓ Explore alternative approaches when facing uncertainty
-✓ Compare different solutions side-by-side
-✓ Prevent tunnel vision and discover better paths
-✓ Handle complex problems with multiple valid approaches
+- Auto-suggestions: Tool recommends mode switches based on content analysis
+- Problem type detection: Automatically detects arithmetic, logical, creative, planning, analysis problems
+- Template suggestions: Recommends appropriate reasoning templates
 
 Usage Tips:
 - Use autoMode for automatic reasoning optimization
 - Trigger phrases like "Let's think step by step" automatically enable Auto-CoT
-- Use pathCount (2-10) for self-consistency on complex problems
-- Use rollbackToThought to go back to a specific thought number
-- Use branching when you see words like "or", "alternatively", "maybe"
-- Branch for creative problems to explore different ideas
-- Branch for analysis to examine multiple perspectives
-- Use provided branchFromThought and branchId when suggested
-- The tool will guide you with specific branch parameters
-
-The tool actively suggests both mode switches AND branching opportunities.`,
+- The tool will suggest mode switches when appropriate`,
   inputSchema: {
     type: "object",
     properties: {
@@ -87,24 +52,6 @@ The tool actively suggests both mode switches AND branching opportunities.`,
         enum: ["arithmetic", "logical", "creative", "planning", "analysis", "general"],
         description: "Type of problem being solved"
       },
-      isRevision: {
-        type: "boolean",
-        description: "Whether this revises previous thinking"
-      },
-      revisesThought: {
-        type: "integer",
-        description: "Which thought is being reconsidered",
-        minimum: 1
-      },
-      branchFromThought: {
-        type: "integer",
-        description: "Branching point thought number",
-        minimum: 1
-      },
-      branchId: {
-        type: "string",
-        description: "Branch identifier"
-      },
       needsMoreThoughts: {
         type: "boolean",
         description: "If more thoughts are needed"
@@ -114,21 +61,6 @@ The tool actively suggests both mode switches AND branching opportunities.`,
         description: "Confidence level (0-10, default: 5)",
         minimum: 0,
         maximum: 10
-      },
-      pathCount: {
-        type: "integer",
-        description: "Number of reasoning paths for self-consistency (2-10, default: 3)",
-        minimum: 2,
-        maximum: 10
-      },
-      rollbackToThought: {
-        type: "integer",
-        description: "Rollback to this thought number (removes all thoughts after it)",
-        minimum: 1
-      },
-      rollbackReason: {
-        type: "string",
-        description: "Reason for the rollback operation"
       },
       autoMode: {
         type: "boolean",

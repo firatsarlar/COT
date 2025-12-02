@@ -324,26 +324,9 @@ describe('Auto-CoT Generation', () => {
   });
 
   describe('Integration with Other Features', () => {
-    it('should work with consensus when auto-CoT is enabled', () => {
+    it('should work with mode switching', () => {
       const input = {
-        thought: 'Let\'s think step by step about this mathematical problem',
-        thoughtNumber: 1,
-        totalThoughts: 1,
-        nextThoughtNeeded: false,
-        pathCount: 3
-      };
-
-      const result = server.processThought(input);
-      const response = JSON.parse(result.content[0].text);
-
-      expect(response.autoCoT).toBeDefined();
-      expect(response.consensus).toBeDefined();
-      expect(response.autoCoT.autoTriggerDetected).toBe(true);
-    });
-
-    it('should work with branching suggestions', () => {
-      const input = {
-        thought: 'Let me think through this - we could try option A or option B',
+        thought: 'Let me think through this - we should consider various options',
         thoughtNumber: 1,
         totalThoughts: 2,
         nextThoughtNeeded: true,
@@ -354,10 +337,10 @@ describe('Auto-CoT Generation', () => {
       const response = JSON.parse(result.content[0].text);
 
       expect(response.autoCoT).toBeDefined();
-      expect(response.suggestedBranching).toBeDefined();
+      expect(response.currentMode).toBeDefined();
     });
 
-    it('should work after rollback operations', () => {
+    it('should work with sequential thoughts', () => {
       // Add initial thought
       server.processThought({
         thought: 'Initial thought',
@@ -366,24 +349,7 @@ describe('Auto-CoT Generation', () => {
         nextThoughtNeeded: true
       });
 
-      server.processThought({
-        thought: 'Second thought',
-        thoughtNumber: 2,
-        totalThoughts: 2,
-        nextThoughtNeeded: false
-      });
-
-      // Rollback
-      server.processThought({
-        thought: 'Rollback',
-        thoughtNumber: 1,
-        totalThoughts: 1,
-        nextThoughtNeeded: false,
-        rollbackToThought: 1,
-        rollbackReason: 'Test'
-      });
-
-      // Add new thought with auto-CoT
+      // Add second thought with auto-CoT
       const result = server.processThought({
         thought: 'Let\'s think step by step about the new approach',
         thoughtNumber: 2,

@@ -1,8 +1,8 @@
-import { 
-  CHAIN_OF_THOUGHT_TOOL, 
-  CHAIN_SUMMARY_TOOL, 
-  LOAD_TEMPLATE_TOOL, 
-  RESET_CHAIN_TOOL 
+import {
+  CHAIN_OF_THOUGHT_TOOL,
+  CHAIN_SUMMARY_TOOL,
+  LOAD_TEMPLATE_TOOL,
+  RESET_CHAIN_TOOL
 } from '../src/tools.js';
 
 describe('Tool Definitions', () => {
@@ -13,62 +13,41 @@ describe('Tool Definitions', () => {
       expect(CHAIN_OF_THOUGHT_TOOL.inputSchema).toBeDefined();
     });
 
-    it('should have comprehensive description mentioning branching', () => {
-      const desc = CHAIN_OF_THOUGHT_TOOL.description;
+    it('should have comprehensive description mentioning auto-CoT', () => {
+      const desc = CHAIN_OF_THOUGHT_TOOL.description || '';
       expect(desc).toBeDefined();
-      expect(desc!.toLowerCase()).toContain('branching');
-      expect(desc!.toLowerCase()).toContain('branch');
-      expect(desc!.toLowerCase()).toContain('alternative');
+      expect(desc.toLowerCase()).toContain('auto');
+      expect(desc.toLowerCase()).toContain('mode');
     });
 
     it('should have proper input schema', () => {
       const schema = CHAIN_OF_THOUGHT_TOOL.inputSchema;
-      
+
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
       expect(schema.required).toBeDefined();
-      
-      // Required fields
-      const required = schema.required as string[];
+
+      const required = schema.required || [];
       expect(required).toContain('thought');
       expect(required).toContain('nextThoughtNeeded');
       expect(required).toContain('thoughtNumber');
       expect(required).toContain('totalThoughts');
     });
 
-    it('should have branching parameters in schema', () => {
-      const props = CHAIN_OF_THOUGHT_TOOL.inputSchema.properties;
-      expect(props).toBeDefined();
-      
-      expect((props as any).branchFromThought).toBeDefined();
-      expect((props as any).branchId).toBeDefined();
-      
-      // These should be integers
-      expect((props as any).branchFromThought.type).toBe('integer');
-      expect((props as any).branchFromThought.minimum).toBe(1);
-      
-      // Branch ID should be string
-      expect((props as any).branchId.type).toBe('string');
-    });
-
     it('should have mode and problem type enums', () => {
-      const props = CHAIN_OF_THOUGHT_TOOL.inputSchema.properties as any;
-      
-      expect(props.mode.enum).toEqual(['draft', 'concise', 'standard', 'auto']);
+      const props = schema_props(CHAIN_OF_THOUGHT_TOOL);
+
+      expect(props.mode.enum).toEqual(['draft', 'concise', 'standard', 'analysis', 'auto']);
       expect(props.problemType.enum).toEqual([
         'arithmetic', 'logical', 'creative', 'planning', 'analysis', 'general'
       ]);
     });
 
-    it('should have revision parameters', () => {
-      const props = CHAIN_OF_THOUGHT_TOOL.inputSchema.properties as any;
-      
-      expect(props.isRevision).toBeDefined();
-      expect(props.revisesThought).toBeDefined();
-      
-      expect(props.isRevision.type).toBe('boolean');
-      expect(props.revisesThought.type).toBe('integer');
-      expect(props.revisesThought.minimum).toBe(1);
+    it('should have autoMode parameter', () => {
+      const props = schema_props(CHAIN_OF_THOUGHT_TOOL);
+
+      expect(props.autoMode).toBeDefined();
+      expect(props.autoMode.type).toBe('boolean');
     });
   });
 
@@ -86,10 +65,10 @@ describe('Tool Definitions', () => {
     });
 
     it('should mention metrics in description', () => {
-      const desc = CHAIN_SUMMARY_TOOL.description;
+      const desc = CHAIN_SUMMARY_TOOL.description || '';
       expect(desc).toBeDefined();
-      expect(desc!.toLowerCase()).toContain('summary');
-      expect(desc!.toLowerCase()).toContain('metrics');
+      expect(desc.toLowerCase()).toContain('summary');
+      expect(desc.toLowerCase()).toContain('metrics');
     });
   });
 
@@ -103,14 +82,15 @@ describe('Tool Definitions', () => {
     it('should require templateName', () => {
       const schema = LOAD_TEMPLATE_TOOL.inputSchema;
       expect(schema.required).toContain('templateName');
-      expect((schema.properties as any).templateName.type).toBe('string');
+      const props = schema_props(LOAD_TEMPLATE_TOOL);
+      expect(props.templateName.type).toBe('string');
     });
 
     it('should mention templates in description', () => {
-      const desc = LOAD_TEMPLATE_TOOL.description;
+      const desc = LOAD_TEMPLATE_TOOL.description || '';
       expect(desc).toBeDefined();
-      expect(desc!.toLowerCase()).toContain('template');
-      expect(desc!.toLowerCase()).toContain('research');
+      expect(desc.toLowerCase()).toContain('template');
+      expect(desc.toLowerCase()).toContain('research');
     });
   });
 
@@ -128,9 +108,9 @@ describe('Tool Definitions', () => {
     });
 
     it('should mention reset in description', () => {
-      const desc = RESET_CHAIN_TOOL.description;
+      const desc = RESET_CHAIN_TOOL.description || '';
       expect(desc).toBeDefined();
-      expect(desc!.toLowerCase()).toContain('reset');
+      expect(desc.toLowerCase()).toContain('reset');
     });
   });
 
@@ -145,7 +125,7 @@ describe('Tool Definitions', () => {
 
       const toolNames = tools.map(t => t.name);
       const expectedNames = ['chainofthought', 'chainsummary', 'loadtemplate', 'resetchain'];
-      
+
       expect(toolNames.sort()).toEqual(expectedNames.sort());
     });
 
@@ -159,8 +139,13 @@ describe('Tool Definitions', () => {
 
       const names = tools.map(t => t.name);
       const uniqueNames = new Set(names);
-      
+
       expect(names.length).toBe(uniqueNames.size);
     });
   });
 });
+
+// Helper to access schema properties without TS assertions
+function schema_props(tool: { inputSchema: { properties?: Record<string, unknown> } }): Record<string, any> {
+  return (tool.inputSchema.properties || {}) as Record<string, any>;
+}

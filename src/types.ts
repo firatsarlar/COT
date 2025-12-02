@@ -12,16 +12,11 @@ export interface ThoughtData {
   tokenCount?: number;
   wordCount: number;
   timestamp: number;
-  isRevision?: boolean;
-  revisesThought?: number;
-  branchFromThought?: number;
-  branchId?: string;
   needsMoreThoughts?: boolean;
   nextThoughtNeeded: boolean;
   problemType?: ProblemType;
   confidence?: number;
   suggestedModeSwitch?: ReasoningMode;
-  suggestedBranching?: string;
 }
 
 export interface ChainMetrics {
@@ -40,23 +35,6 @@ export interface ChainTemplate {
   mode: ReasoningMode;
   exampleThoughts: string[];
   description: string;
-}
-
-export interface ConsensusData {
-  paths: ThoughtData[][];
-  consensus: string;
-  confidence: number;
-  agreementScore: number;
-  pathCount: number;
-  votingResults: Record<string, number>;
-}
-
-export interface RollbackState {
-  thoughtId: string;
-  previousStates: ThoughtData[];
-  rollbackReason: string;
-  correctedThought: ThoughtData;
-  timestamp: number;
 }
 
 export interface AutoCoTConfig {
